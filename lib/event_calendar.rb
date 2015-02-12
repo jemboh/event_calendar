@@ -47,13 +47,11 @@ module EventCalendar
       [strip_start, strip_end]
     end
     
-    # Get the events overlapping the given start and end dates
+    # Get the events overlapping the given start and end dates 
+    # SCOPED IS DEPRECATED
+    # FIXED FOR RAILS 4
     def events_for_date_range(start_d, end_d, find_options = {})
-      self.scoped(find_options).find(
-        :all,
-        :conditions => [ "(? <= #{self.quoted_table_name}.#{self.end_at_field}) AND (#{self.quoted_table_name}.#{self.start_at_field}< ?)", start_d.to_time.utc, end_d.to_time.utc ],
-        :order => "#{self.quoted_table_name}.#{self.start_at_field} ASC"
-      )
+      self.all.where("start_at >= ? AND end_at < ?", start_d, end_d).order('start_at ASC')
     end
     
     # Create the various strips that show events.
